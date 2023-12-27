@@ -1,6 +1,5 @@
-<?php include('inc/header.php'); ?>
+<?php include('inc/header.php');
 
-<?php
 $name = $email = $body = '';
 $nameErr = $emailErr = $bodyErr = '';
 
@@ -29,17 +28,23 @@ if (isset($_POST['submit'])) {
     if (empty($nameErr) && empty($emailErr) && empty($bodyErr)) {
         // Add to the database
         $sql = "INSERT INTO feedback (name, email, body) VALUES ('$name', '$email', '$body')";
-        if (mysqli_query($conn, $sql)) {
-            // Successfully inserted
-            header('Location: feedback.php');
-        } else {
-            echo 'Error ' . mysqli_error($conn);
-        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['name' => $name, 'email' => $email, 'body' => $body]);
+        header('Location: feedback.php');
+        // The following lines were using mysqli to insert data into our database.
+        // if (mysqli_query($conn, $sql)) {
+        //     // Successfully inserted
+        //     header('Location: feedback.php');
+        // } else {
+        //     echo 'Error ' . mysqli_error($conn);
+        // }
     }
 }
 ?>
 
-<img src="./img/logo.png" class="w-25 mb-3" alt="" />
+<div class="d-flex flex-column align-items-center w-25">
+    <img src="./img/logo.png" class="w-25" alt="" />
+</div>
 <h2>Feedback</h2>
 <p class="lead text-center">Leave feedback for Traversy Media</p>
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST" class="mt-4 w-75">
